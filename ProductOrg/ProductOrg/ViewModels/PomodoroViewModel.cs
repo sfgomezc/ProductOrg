@@ -10,7 +10,7 @@ namespace ProductOrg.ViewModels
     public class PomodoroViewModel : BaseViewModel
     {
         #region Attributes
-        
+
         private Timer timer;
         private TimeSpan _elapsed;
         private Activity _currentActivity;
@@ -154,14 +154,14 @@ namespace ProductOrg.ViewModels
                 Durations = config.Working * 60;
 
             CurrentActivity = activity;
-            Elapsed = new TimeSpan(0, 0, 0);
+            Elapsed = new TimeSpan(0, 0, Durations);
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Elapsed = Elapsed.Add(TimeSpan.FromSeconds(1));
+            Elapsed = Elapsed.Add(TimeSpan.FromSeconds(-1));
 
-            if (CurrentActivity == Activity.Working && Elapsed.TotalSeconds >= config.Working * 60)
+            if (CurrentActivity == Activity.Working && Elapsed.TotalSeconds == 0)
             {
                 //AddHistory(Elapsed.TotalMinutes, true);
                 _pomodoros++;
@@ -171,14 +171,12 @@ namespace ProductOrg.ViewModels
                     ChangeState(Activity.ShortBreak);
             }
 
-            if ((CurrentActivity == Activity.ShortBreak && Elapsed.TotalSeconds >= config.ShortBreak * 60)
-               || (CurrentActivity == Activity.LongBreak && Elapsed.TotalSeconds >= config.LongBreak * 60))
+            if ((CurrentActivity == Activity.ShortBreak && Elapsed.TotalSeconds == 0)
+               || (CurrentActivity == Activity.LongBreak && Elapsed.TotalSeconds == 0))
             {
                 //AddHistory(Elapsed.TotalMinutes, false);
                 ChangeState(Activity.Working);
             }
-
-
         }
 
         private void ConfigureTimer()
@@ -195,13 +193,13 @@ namespace ProductOrg.ViewModels
             config = new Configuration()
             {
                 Id = 1,
-                Working = 20,
+                Working = 2,
                 Pomorodos = 4,
                 ShortBreak = 5,
                 LongBreak = 15
             };
 
-            Elapsed = new TimeSpan(0, 0, 0);
+            Elapsed = new TimeSpan(0, 0, config.Working * 60);
             Durations = config.Working * 60;
         }
 
