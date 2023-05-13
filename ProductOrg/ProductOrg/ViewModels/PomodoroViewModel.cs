@@ -14,7 +14,8 @@ namespace ProductOrg.ViewModels
         private Timer timer;
         private TimeSpan _elapsed;
         private Activity _currentActivity;
-        private int _pomodoros = 0;
+        private int _pomodoros = 1;
+        private float _progressValue = 1;   //percentage 0-1
         private bool _isRunning;
         private bool _isWorking;
         private int _durations;
@@ -24,6 +25,26 @@ namespace ProductOrg.ViewModels
 
         #endregion
         #region Objetos
+
+        public float ProgressValue
+        {
+            get { return _progressValue; }
+            set
+            {
+                _progressValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Pomodoros
+        {
+            get { return _pomodoros; }
+            set
+            {
+                _pomodoros = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int Durations
         {
@@ -146,7 +167,7 @@ namespace ProductOrg.ViewModels
             if (activity == Activity.LongBreak)
             {
                 Durations = config.LongBreak * 60;
-                _pomodoros = 0;
+                Pomodoros = 1;
             }
             else if (activity == Activity.ShortBreak)
                 Durations = config.ShortBreak * 60;
@@ -160,12 +181,12 @@ namespace ProductOrg.ViewModels
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             Elapsed = Elapsed.Add(TimeSpan.FromSeconds(-1));
+            ProgressValue = (float)Elapsed.TotalSeconds / Durations;
 
             if (CurrentActivity == Activity.Working && Elapsed.TotalSeconds == 0)
             {
                 //AddHistory(Elapsed.TotalMinutes, true);
-                _pomodoros++;
-                if (_pomodoros == config.Pomorodos)
+                if (Pomodoros == config.Pomorodos)
                     ChangeState(Activity.LongBreak);
                 else
                     ChangeState(Activity.ShortBreak);
@@ -176,6 +197,7 @@ namespace ProductOrg.ViewModels
             {
                 //AddHistory(Elapsed.TotalMinutes, false);
                 ChangeState(Activity.Working);
+                Pomodoros++;
             }
         }
 

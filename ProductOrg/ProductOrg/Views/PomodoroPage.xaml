@@ -1,12 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProductOrg.Views.PomodoroPage">
+             x:Class="ProductOrg.Views.PomodoroPage"
+             xmlns:control="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin">
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Welcome to Pomodoro"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+                   VerticalOptions="CenterAndExpand" 
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="State"
+                   HorizontalOptions="CenterAndExpand" />
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Working"
+                       HorizontalOptions="CenterAndExpand">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsWorking}"
+                                     Value="True">
+                            <Setter Property="FontAttributes" Value="Bold"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsWorking}"
+                                     Value="False">
+                            <Setter Property="FontAttributes" Value="None"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label Text="Short break"
+                       HorizontalOptions="CenterAndExpand" />
+                <Label Text="Long break"
+                       HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+            <Grid>
+                <control:ProgressRing HeightRequest="300"
+                                      RingThickness="20"
+                                      RingProgressColor="Orange"
+                                      Progress="{Binding ProgressValue}" />
+                <Label Text="{Binding Elapsed, StringFormat='{}{0:t}'}"
+                       FontSize="30"
+                       VerticalOptions="CenterAndExpand" 
+                       HorizontalOptions="CenterAndExpand" />
+            </Grid>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="CenterAndExpand">
+                <Label Text="Pomodoro #" />
+                <Label Text="{Binding Pomodoros}" />
+            </StackLayout>
+
+            <Button Text="Iniciar / Pausar"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" 
+                    TextColor="White"
+                    Command="{Binding startPauseCmd}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsWorking}"
+                                 Value="True">
+                        <Setter Property="Background" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsWorking}"
+                                 Value="False">
+                        <Setter Property="Background" Value="Green"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
