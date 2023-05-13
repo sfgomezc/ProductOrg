@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using ProductOrg.Models;
 using System;
+using ProductOrg.Services;
 
 namespace ProductOrg.ViewModels
 {
@@ -74,7 +75,7 @@ namespace ProductOrg.ViewModels
                 _currentActivity = value;
                 IsWorking = value == Activity.Working;
                 //eventAggregator.GetEvent<UpdateNavBarEvent>().Publish(IsWorking);
-                //soundService.ChangeActivity();
+                soundService.ChangeActivity();
             }
         }
 
@@ -126,12 +127,21 @@ namespace ProductOrg.ViewModels
         public ICommand startPauseCmd { get; set; }
         public ICommand logoutCmd { get; set; }
 
+        #endregion
+        #region Services
+
+        private SoundService soundService;
+
+        #endregion
+        #region Constructors
+
         public PomodoroViewModel(INavigation navigation)
         {
             Navigation = navigation;
             startPauseCmd = new Command(async () => await StartPauseAsync());
             logoutCmd = new Command(async () => await LogoutAsync());
             //AppVersion = ((App)App.Current).appVersion;
+            this.soundService = new SoundService();
             LoadConfiguracion();
             ConfigureTimer();
         }
