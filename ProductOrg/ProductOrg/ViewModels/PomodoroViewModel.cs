@@ -5,6 +5,9 @@ using Xamarin.Forms;
 using ProductOrg.Models;
 using System;
 using ProductOrg.Services;
+using Xamarin.Essentials;
+using ProductOrg.Views;
+using ProductOrg.Repositories;
 
 namespace ProductOrg.ViewModels
 {
@@ -22,10 +25,10 @@ namespace ProductOrg.ViewModels
         private int _durations;
         private string _menuMessage;
         private bool _showMenuMessage;
-        private Configuration config;
+        private PomodoroConfiguration config;
 
         #endregion
-        #region Objetos
+        #region Properties
 
         public float ProgressValue
         {
@@ -122,10 +125,10 @@ namespace ProductOrg.ViewModels
         public string AppVersion { get; set; }
 
         #endregion
-        #region Comandos
+        #region Commands
 
         public ICommand startPauseCmd { get; set; }
-        public ICommand logoutCmd { get; set; }
+        public ICommand pomodoroConfigCmd { get; set; }
 
         #endregion
         #region Services
@@ -139,7 +142,7 @@ namespace ProductOrg.ViewModels
         {
             Navigation = navigation;
             startPauseCmd = new Command(async () => await StartPauseAsync());
-            logoutCmd = new Command(async () => await LogoutAsync());
+            pomodoroConfigCmd = new Command(async () => await ConfigurationAsync());
             //AppVersion = ((App)App.Current).appVersion;
             this.soundService = new SoundService();
             LoadConfiguracion();
@@ -147,24 +150,29 @@ namespace ProductOrg.ViewModels
         }
 
         #endregion
-        #region Procesos
+        #region Process
 
         private async Task StartPauseAsync()
         {
             if (IsRunning)
+            {
                 Pause();
+                DeviceDisplay.KeepScreenOn = false;
+            }
             else
+            {
                 Start();
+                DeviceDisplay.KeepScreenOn = true;
+            }
         }
 
-        private async Task LogoutAsync()
+        private async Task ConfigurationAsync()
         {
-            var result = await App.Current.MainPage.DisplayAlert("Información", "Desea cerrar la sesión actual?", "Si", "No");
-            if (result) await Navigation.PopAsync();
+            await Navigation.PushAsync(new PomodoroConfigPage());
         }
 
         #endregion
-        #region Metodos Privados
+        #region Private Methods
 
         private void ShowMessage(string message)
         {
@@ -220,16 +228,8 @@ namespace ProductOrg.ViewModels
         private void LoadConfiguracion()
         {
             CurrentActivity = Activity.Working;
-            //var repo = new ConfigurationRepository();
-            //config = repo.LoadAsync();
-            config = new Configuration()
-            {
-                Id = 1,
-                Working = 2,
-                Pomorodos = 4,
-                ShortBreak = 5,
-                LongBreak = 15
-            };
+            var repo = new PomodoroConfigRepository();
+            config = repo.LoadAsync();
 
             Elapsed = new TimeSpan(0, 0, config.Working * 60);
             Durations = config.Working * 60;
@@ -246,6 +246,17 @@ namespace ProductOrg.ViewModels
             timer.Stop();
             IsRunning = false;
         }
+
+        public void Destroy()
+        {
+            try
+            {
+                timer.Stop();
+                timer = null;
+            }
+            catch { }
+        }
+
         #endregion
     }
 }
