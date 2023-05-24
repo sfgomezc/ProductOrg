@@ -84,6 +84,7 @@ namespace ProductOrg.ViewModels
 
         #endregion
         #region Constructs
+
         public PomodoroConfigViewModel(INavigation navigation)
         {
             Navigation = navigation;
@@ -99,7 +100,37 @@ namespace ProductOrg.ViewModels
         }
 
         #endregion
-        #region Private Methods
+        #region Process
+
+        private async void Save()
+        {
+            var repo = new PomodoroConfigRepository();
+
+            var configuracion = new PomodoroConfiguration()
+            {
+                Working = SelectedWorking,
+                ShortBreak = SelectedShortBreaks,
+                LongBreak = SelectedLongBreaks,
+                Pomorodos = SelectedPomodoros
+            };
+
+            try
+            {
+                repo.SaveAsync(configuracion);
+            }
+            catch (Exception ex)
+            {
+                //await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.ErrorSaveconfiguration, Languages.Accept);
+                await App.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok");
+                return;
+            }
+
+            //await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.SuccessSaveConfiguration, Languages.Accept);
+            await App.Current.MainPage.DisplayAlert("Info", "Configuration update!!", "Ok");
+            await Navigation.PopAsync();
+
+        }
+
         private async void Reset()
         {
             //var answer = await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.QuestionDeleteHistory, Languages.Yes, Languages.No);
@@ -120,6 +151,10 @@ namespace ProductOrg.ViewModels
             //    await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.SuccessDeleteHistory, Languages.Accept);
             //}
         }
+
+        #endregion
+        #region Private Methods
+
         private void LoadControls()
         {
             Working = new ObservableCollection<short>(new short[] { 5, 10, 15, 20, 25, 30, 45, 60 });
@@ -150,34 +185,6 @@ namespace ProductOrg.ViewModels
             SelectedPomodoros = config.Pomorodos;
         }
 
-        private async void Save()
-        {
-            var repo = new PomodoroConfigRepository();
-
-            var configuracion = new PomodoroConfiguration()
-            {
-                Working = SelectedWorking,
-                ShortBreak = SelectedShortBreaks,
-                LongBreak = SelectedLongBreaks,
-                Pomorodos = SelectedPomodoros
-            };
-
-            try
-            {
-                repo.SaveAsync(configuracion);
-            }
-            catch (Exception ex)
-            {
-                //await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.ErrorSaveconfiguration, Languages.Accept);
-                await App.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok");
-                return;
-            }
-
-            //await dialogService.DisplayAlertAsync(Languages.Pomodoro, Languages.SuccessSaveConfiguration, Languages.Accept);
-            await App.Current.MainPage.DisplayAlert("Info", "Configuration update!!", "Ok");
-            await Navigation.PopAsync();
-
-        }
         #endregion
     }
 }
