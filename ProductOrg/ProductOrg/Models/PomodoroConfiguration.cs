@@ -1,11 +1,10 @@
-﻿//using System.ComponentModel.DataAnnotations;
-
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProductOrg.Models
 {
-    public class Configuration
+    public class PomodoroConfiguration
     {
-        //[Key]
+        [Key]
         public short Id { get; set; }
         public short Working { get; set; }
         public short ShortBreak { get; set; }
