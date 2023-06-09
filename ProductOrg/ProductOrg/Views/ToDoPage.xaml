@@ -7,6 +7,33 @@
             <Label Text="Welcome to Todo"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            <ListView ItemsSource="{Binding ListTodo}"
+                      HasUnevenRows="True"
+                      x:Name="lstTodo"
+                      Margin="5"
+                      HeightRequest="500"
+                      RowHeight="80"
+                      SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout Orientation="Horizontal">
+                                    <CheckBox Grid.Column="1"
+                                              IsChecked="{Binding Selected}" />
+                                    <Label Text="{Binding Data.Title}"
+                                           FontSize="14"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
