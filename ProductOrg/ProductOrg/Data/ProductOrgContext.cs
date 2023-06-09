@@ -16,12 +16,14 @@ namespace ProductOrg.Repositories
         #region Properties
         
         public DbSet<PomodoroConfiguration> PomodoroConfigurations { get; set; }
+        public DbSet<TodoModel> todoModels { get; set; }
 
         #endregion
         #region Constructs
 
         public ProductOrgContext()
         {
+            //this.Database.EnsureDeleted();    //Use when new entity
             this.Database.EnsureCreated();
         }
 
