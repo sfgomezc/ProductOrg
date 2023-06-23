@@ -3,6 +3,7 @@ using ProductOrg.Models;
 using System;
 using System.Collections.ObjectModel;
 using ProductOrg.Repositories;
+using ProductOrg.Views;
 
 namespace ProductOrg.ViewModels
 {
@@ -28,6 +29,7 @@ namespace ProductOrg.ViewModels
         #endregion
         #region Commands
 
+        public Command AddCommand { get; set; }
         public Command SaveCommand { get; set; }
         public Command ResetCommand { get; set; }
 
@@ -39,6 +41,7 @@ namespace ProductOrg.ViewModels
             Navigation = navigation;
             ListTodo = new ObservableCollection<SelectableData<TodoModel>>();
 
+            AddCommand = new Command(AddTodo);
             SaveCommand = new Command(Save);
             ResetCommand = new Command(Reset);
             LoadTodos();
@@ -46,6 +49,11 @@ namespace ProductOrg.ViewModels
 
         #endregion
         #region Process
+
+        private async void AddTodo()
+        {
+            await Navigation.PushAsync(new ToDoItemPage());
+        }
 
         private async void Save()
         {
